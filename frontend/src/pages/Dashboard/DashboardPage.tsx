@@ -42,13 +42,11 @@ export default function DashboardPage() {
               trend={metric.trend}
               icon={Icon}
             />
-            
           );
         })}
       </div>
       <div className="grid gap-6 lg:grid-cols-2">
             <ExpenseChart />
-
             <div className="rounded-2xl border bg-card p-6">
                 Income Trend
             </div>
