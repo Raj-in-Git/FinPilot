@@ -28,7 +28,7 @@ export const navigation: NavigationItem[] = [
   },
   {
     label: "Budget",
-    to: "/budget",
+    to: "/budgets",
     icon: PiggyBank,
   },
   {

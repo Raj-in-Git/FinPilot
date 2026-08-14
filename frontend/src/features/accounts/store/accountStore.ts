@@ -14,8 +14,19 @@ interface AccountStore {
   accounts: Account[];
 
   addAccount: (data: AddAccountData) => void;
-  updateAccount: (id: string, data: Partial<AddAccountData>) => void;
+
+  updateAccount: (
+    id: string,
+    data: Partial<AddAccountData>
+  ) => void;
+
   deleteAccount: (id: string) => void;
+
+  // 👇 ADD THIS
+  updateBalance: (
+    id: string,
+    amount: number
+  ) => void;
 }
 
 export const useAccountStore = create<AccountStore>()(
@@ -49,6 +60,20 @@ export const useAccountStore = create<AccountStore>()(
         set((state) => ({
           accounts: state.accounts.filter(
             (account) => account.id !== id
+          ),
+        }));
+      },
+
+      // 👇 ADD THIS ENTIRE BLOCK
+      updateBalance: (id, amount) => {
+        set((state) => ({
+          accounts: state.accounts.map((account) =>
+            account.id === id
+              ? {
+                  ...account,
+                  balance: account.balance + amount,
+                }
+              : account
           ),
         }));
       },

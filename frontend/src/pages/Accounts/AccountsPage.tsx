@@ -5,9 +5,7 @@ import EditAccountDialog from "@/features/accounts/components/EditAccountDialog"
 import { useAccountStore } from "@/features/accounts/store/accountStore";
 
 import AddAccountDialog from "@/features/accounts/components/AddAccountDialog";
-const deleteAccount = useAccountStore(
-  (state) => state.deleteAccount
-);
+
 
 export default function AccountsPage() {
   const accounts = useAccountStore((state) => state.accounts);
@@ -16,6 +14,9 @@ export default function AccountsPage() {
     (total, account) => total + account.balance,
     0
   );
+  const deleteAccount = useAccountStore(
+  (state) => state.deleteAccount
+);
 
   return (
     <div className="space-y-8">

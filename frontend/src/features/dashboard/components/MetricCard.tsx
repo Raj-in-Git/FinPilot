@@ -41,26 +41,28 @@ export default function MetricCard({
           </div>
         </div>
 
-        <div className="mt-6 flex items-center gap-2">
-          {positive ? (
-            <TrendingUp className="h-4 w-4 text-green-600" />
-          ) : (
-            <TrendingDown className="h-4 w-4 text-red-600" />
-          )}
-
-          <span
-            className={cn(
-              "text-sm font-medium",
-              positive ? "text-green-600" : "text-red-600"
+        {change !== 0 && (
+          <div className="mt-6 flex items-center gap-2">
+            {positive ? (
+              <TrendingUp className="h-4 w-4 text-green-600" />
+            ) : (
+              <TrendingDown className="h-4 w-4 text-red-600" />
             )}
-          >
-            {Math.abs(change)}%
-          </span>
 
-          <span className="text-sm text-muted-foreground">
-            vs last month
-          </span>
-        </div>
+            <span
+              className={cn(
+                "text-sm font-medium",
+                positive ? "text-green-600" : "text-red-600"
+              )}
+            >
+              {Math.abs(change)}%
+            </span>
+
+            <span className="text-sm text-muted-foreground">
+              vs last month
+            </span>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
