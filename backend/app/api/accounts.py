@@ -9,6 +9,8 @@ from app.schemas.account import (
     AccountResponse,
     AccountUpdate,
 )
+from app.core.dependencies import get_current_user
+from app.models.user import User
 
 router = APIRouter(
     prefix="/api/accounts",
@@ -24,13 +26,15 @@ router = APIRouter(
 def create_account(
     account_data: AccountCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     account = Account(
-        name=account_data.name,
-        type=account_data.type,
-        balance=account_data.balance,
-        currency=account_data.currency.upper(),
-    )
+    name=account_data.name,
+    type=account_data.type,
+    balance=account_data.balance,
+    currency=account_data.currency.upper(),
+    user_id=current_user.id,
+)
 
     db.add(account)
     db.commit()
@@ -45,10 +49,13 @@ def create_account(
 )
 def get_accounts(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     result = db.execute(
-        select(Account).order_by(Account.id)
-    )
+    select(Account)
+    .where(Account.user_id == current_user.id)
+    .order_by(Account.id)
+)
 
     return result.scalars().all()
 
@@ -60,8 +67,14 @@ def get_accounts(
 def get_account(
     account_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    account = db.get(Account, account_id)
+    account = db.execute(
+    select(Account).where(
+        Account.id == account_id,
+        Account.user_id == current_user.id,
+    )
+).scalar_one_or_none()
 
     if account is None:
         raise HTTPException(
@@ -80,8 +93,14 @@ def update_account(
     account_id: int,
     account_data: AccountUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    account = db.get(Account, account_id)
+    account = db.execute(
+        select(Account).where(
+            Account.id == account_id,
+            Account.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
 
     if account is None:
         raise HTTPException(
@@ -114,8 +133,14 @@ def update_account(
 def delete_account(
     account_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    account = db.get(Account, account_id)
+    account = db.execute(
+        select(Account).where(
+            Account.id == account_id,
+            Account.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
 
     if account is None:
         raise HTTPException(

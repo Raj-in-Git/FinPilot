@@ -40,3 +40,4 @@ tzdata==2026.3
 uvicorn==0.52.2
 pwdlib[argon2]
 email-validator
+python-multipart

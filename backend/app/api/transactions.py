@@ -16,6 +16,9 @@ from app.services.transaction_service import (
     delete_transaction,
 )
 
+from app.core.dependencies import get_current_user
+from app.models.user import User
+
 router = APIRouter(
     prefix="/api/transactions",
     tags=["Transactions"],
@@ -30,7 +33,21 @@ router = APIRouter(
 def create_transaction_api(
     transaction_data: TransactionCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    account = db.execute(
+        select(Account).where(
+            Account.id == transaction_data.account_id,
+            Account.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if account is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Account not found",
+        )
+
     return create_transaction(
         db,
         transaction_data,
@@ -43,11 +60,14 @@ def create_transaction_api(
 )
 def get_transactions(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     result = db.execute(
-        select(Transaction)
-        .order_by(Transaction.date.desc())
-    )
+    select(Transaction)
+    .join(Account)
+    .where(Account.user_id == current_user.id)
+    .order_by(Transaction.date.desc())
+)
 
     return result.scalars().all()
 
@@ -59,11 +79,16 @@ def get_transactions(
 def get_transaction(
     transaction_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    transaction = db.get(
-        Transaction,
-        transaction_id,
+    transaction = db.execute(
+    select(Transaction)
+    .join(Account)
+    .where(
+        Transaction.id == transaction_id,
+        Account.user_id == current_user.id,
     )
+).scalar_one_or_none()
 
     if transaction is None:
         raise HTTPException(
@@ -81,7 +106,23 @@ def update_transaction_api(
     transaction_id: int,
     transaction_data: TransactionUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    transaction = db.execute(
+        select(Transaction)
+        .join(Account)
+        .where(
+            Transaction.id == transaction_id,
+            Account.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if transaction is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found",
+        )
+
     return update_transaction(
         db,
         transaction_id,
@@ -96,7 +137,23 @@ def update_transaction_api(
 def delete_transaction_api(
     transaction_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
+    transaction = db.execute(
+        select(Transaction)
+        .join(Account)
+        .where(
+            Transaction.id == transaction_id,
+            Account.user_id == current_user.id,
+        )
+    ).scalar_one_or_none()
+
+    if transaction is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Transaction not found",
+        )
+
     delete_transaction(
         db,
         transaction_id,
