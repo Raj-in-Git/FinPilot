@@ -1,0 +1,19 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: finpilot-postgres
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: finpilot
+      POSTGRES_USER: finpilot
+      POSTGRES_PASSWORD: finpilot_dev_password
+
+    ports:
+    - "5433:5432"
+
+    volumes:
+      - finpilot_postgres_data:/var/lib/postgresql/data
+
+volumes:
+  finpilot_postgres_data:
