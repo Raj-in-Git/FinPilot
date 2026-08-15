@@ -2,7 +2,10 @@ alembic==1.19.1
 annotated-doc==0.0.5
 annotated-types==0.8.0
 anyio==4.14.2
+argon2-cffi==25.1.0
+argon2-cffi-bindings==25.1.0
 bcrypt==5.0.0
+cffi==2.1.1
 click==8.4.2
 colorama==0.4.6
 dnspython==2.8.0
@@ -17,10 +20,13 @@ MarkupSafe==3.0.3
 passlib==1.7.4
 psycopg==3.3.4
 psycopg-binary==3.3.4
+pwdlib==0.3.1
 pyasn1==0.6.4
+pycparser==3.0
 pydantic==2.13.4
 pydantic-settings==2.15.0
 pydantic_core==2.46.4
+PyJWT==2.13.0
 python-dotenv==1.2.2
 python-jose==3.5.0
 python-multipart==0.0.32
@@ -32,3 +38,5 @@ typing-inspection==0.4.4
 typing_extensions==4.16.0
 tzdata==2026.3
 uvicorn==0.52.2
+pwdlib[argon2]
+email-validator

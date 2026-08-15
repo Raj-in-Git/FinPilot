@@ -1,7 +1,9 @@
 from fastapi import FastAPI
 from sqlalchemy import text
-
+from app.api.accounts import router as accounts_router
+from app.api.transactions import router as transactions_router
 from app.db.session import engine
+from app.api.auth import router as auth_router
 
 
 app = FastAPI(
@@ -9,7 +11,9 @@ app = FastAPI(
     description="Personal Finance Management API",
     version="1.0.0",
 )
-
+app.include_router(accounts_router)
+app.include_router(transactions_router)
+app.include_router(auth_router)
 
 @app.get("/")
 def root():
